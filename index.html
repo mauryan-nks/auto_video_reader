@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Video Thumbnails with Basic Player</title>
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -44,31 +42,24 @@
 <div class="container my-5">
     <h1 class="text-center mb-5">Dynamic Video Thumbnails with Basic Player</h1>
 
-    <!-- Basic Video Player -->
+    <!-- Basic Video Player // You can use any if you need -->
     <div class="video-container">
         <video id="videoPlayer" controls preload="auto" width="100%" height="400">
             <source id="videoSource" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
-
-    <!-- Thumbnails Gallery -->
     <div class="row" id="thumbnailGallery">
-        <!-- Thumbnails will be generated dynamically -->
     </div>
-
-    <!-- Canvas to capture video frames -->
     <canvas id="canvas" style="display:none;"></canvas>
 
 </div>
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     // Fetch video URLs from PHP and dynamically generate thumbnails
     function loadVideos() {
-        fetch('o.php') // Fetch video URLs from PHP
+        fetch('o.php') // Fetch video url from php if you have array data mention it in o.php or if you have folder and want to load it dynamically or automically use v.php
             .then(response => response.json()) // Parse JSON response
             .then(videos => {
                 const thumbnailGallery = document.getElementById('thumbnailGallery');
@@ -78,14 +69,12 @@
                     const col = document.createElement('div');
                     col.className = 'col-lg-4 col-md-6 thumbnail-item';
 
-                    // Create a placeholder for the thumbnail
+                    //for the thumbnail
                     const thumbnailImage = document.createElement('img');
-                    thumbnailImage.className = 'thumbnail img-fluid'; // Use Bootstrap's img-fluid for responsiveness
+                    thumbnailImage.className = 'thumbnail img-fluid';
                     thumbnailImage.alt = `Video ${index + 1}`;
                     thumbnailImage.dataset.videoUrl = videoUrl;
-                    thumbnailImage.onclick = () => loadVideo(videoUrl); // Click handler to load video
-
-                    // Generate the thumbnail dynamically
+                    thumbnailImage.onclick = () => loadVideo(videoUrl); 
                     generateThumbnail(videoUrl, thumbnailImage).catch(err => {
                         console.error(`Error generating thumbnail for ${videoUrl}`, err);
                     });
@@ -105,22 +94,16 @@
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
 
-            tempVideo.style.display = 'none'; // Hide the video element
-            tempVideo.src = videoUrl; // Set the video source for the temporary video
-            document.body.appendChild(tempVideo); // Add it to the body (so it can load)
-
+            tempVideo.style.display = 'none'; 
+            tempVideo.src = videoUrl; 
+            document.body.appendChild(tempVideo); 
             tempVideo.onloadedmetadata = function () {
-               tempVideo.currentTime = 5; // Seek to 2 seconds to capture the thumbnail
+               tempVideo.currentTime = 5; // Seek to 2 seconds to capture the thumbnail, you may change if you need
             };
-
             tempVideo.onseeked = function () {
                 canvas.width = tempVideo.videoWidth;
                 canvas.height = tempVideo.videoHeight;
-
-                // Draw the frame from the video to the canvas
                 context.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-
-                // Set the thumbnail image src to the canvas data URL
                 imgElement.src = canvas.toDataURL('image/png');
                                 document.body.removeChild(tempVideo);
                 resolve();
@@ -132,17 +115,14 @@
             };
         });
     }
-
-    // Function to load the selected video into the basic HTML5 video player
     function loadVideo(videoUrl) {
         const videoSource = document.getElementById('videoSource');
-        videoSource.src = videoUrl; // Set the video source
+        videoSource.src = videoUrl;
         const videoPlayer = document.getElementById('videoPlayer');
         videoPlayer.load(); // Load the new video
         videoPlayer.play(); // Play the video
     }
 
-    // Load videos on page load
     window.onload = loadVideos;
 </script>
 
